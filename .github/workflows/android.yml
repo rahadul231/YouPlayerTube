@@ -42,14 +42,35 @@ jobs:
           echo "--- cmdline-tools ---"
           ls "${ANDROID_HOME:-/nonexistent}/cmdline-tools" || true
 
-      - name: Install Android platform 37 and build-tools 36.0.0 (best effort)
-        continue-on-error: true
+      # Android SDK check. Run #4 showed that the old step asked sdkmanager for
+      # "platforms;android-37", which is not a valid package id (runner-image notes
+      # list the platform as "android-37.0"). The build still passed, so this step
+      # now only checks what the runner has and installs the correct id if missing.
+      - name: Check Android platform 37 and build-tools 36.0.0
         run: |
-          SDKM="${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
-          if [ ! -x "$SDKM" ]; then SDKM="$(command -v sdkmanager || true)"; fi
-          echo "sdkmanager: ${SDKM:-not found}"
-          yes | "$SDKM" --licenses > /dev/null || true
-          "$SDKM" "platforms;android-37" "build-tools;36.0.0"
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          echo "SDK_ROOT=${SDK_ROOT:-not set}"
+          NEED=""
+          if [ -d "$SDK_ROOT/platforms/android-37.0" ]; then
+            echo "present: platforms/android-37.0"
+          else
+            echo "::warning::platforms/android-37.0 not found on this runner"
+            NEED="$NEED platforms;android-37.0"
+          fi
+          if [ -d "$SDK_ROOT/build-tools/36.0.0" ]; then
+            echo "present: build-tools/36.0.0"
+          else
+            echo "::warning::build-tools/36.0.0 not found on this runner"
+            NEED="$NEED build-tools;36.0.0"
+          fi
+          if [ -n "$NEED" ]; then
+            SDKM="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+            if [ ! -x "$SDKM" ]; then SDKM="$(command -v sdkmanager || true)"; fi
+            echo "installing:$NEED with ${SDKM:-sdkmanager not found}"
+            printf 'y\n%.0s' $(seq 1 50) | "$SDKM" --licenses > /dev/null || true
+            # shellcheck disable=SC2086
+            "$SDKM" $NEED || echo "::warning::sdkmanager could not install:$NEED (AGP may still download it during the build)"
+          fi
 
       - name: Set up Gradle 9.6.0
         uses: gradle/actions/setup-gradle@v6
@@ -61,6 +82,13 @@ jobs:
 
       - name: Run unit tests
         run: gradle --no-daemon --stacktrace :app:testDebugUnitTest
+
+      - name: Show SDK state after build (diagnostic)
+        if: always()
+        run: |
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          echo "--- platforms ---";   ls "$SDK_ROOT/platforms"   || true
+          echo "--- build-tools ---"; ls "$SDK_ROOT/build-tools" || true
 
       - name: Inspect APK
         run: |
@@ -79,6 +107,12 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
           archive: false
           if-no-files-found: error
+
+      - name: Verify Gradle wrapper (runs after the APK is already uploaded)
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon --version
+          ./gradlew --no-daemon --stacktrace :app:assembleDebug
 
       - name: Upload build reports on failure
         if: failure()
