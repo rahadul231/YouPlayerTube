@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -13,8 +14,8 @@ android {
         minSdk = 26
         targetSdk = 37 // provisional; Android 17 behaviour changes not yet reviewed
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 2
-        versionName = "0.0.3-phase03.1"
+        versionCode = 3
+        versionName = "0.0.4-phase03.2"
     }
 
     buildTypes {
@@ -33,10 +34,18 @@ android {
     }
 }
 
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
+
 dependencies {
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.datastore.preferences)
+    testImplementation(libs.coroutines.test)
+    androidTestImplementation(libs.room.testing)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     testImplementation(libs.junit)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

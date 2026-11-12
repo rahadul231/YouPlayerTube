@@ -2,20 +2,57 @@ package com.youplayertube.app.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.youplayertube.app.domain.LibraryRepository
+import androidx.lifecycle.viewModelScope
+import com.youplayertube.app.domain.*
 import com.youplayertube.app.ui.navigation.MainTab
 import com.youplayertube.app.ui.navigation.NavigationState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
-data class AppUiState(val navigation: NavigationState, val library: com.youplayertube.app.domain.LibrarySnapshot)
-class AppViewModel(private val savedState: SavedStateHandle, repository: LibraryRepository) : ViewModel() {
-    private val mutableState = MutableStateFlow(AppUiState(NavigationState.restore(savedState["selectedTab"]), repository.snapshot()))
+data class AppUiState(
+    val navigation: NavigationState,
+    val library: LoadState<LibraryData> = LoadState.Loading,
+    val sort: LibrarySort = LibrarySort.DATE,
+    val preferenceWriteError: String? = null,
+)
+class AppViewModel(private val savedState: SavedStateHandle, private val repository: LibraryRepository,
+    private val preferences: PreferencesRepository) : ViewModel() {
+    private val mutableState = MutableStateFlow(AppUiState(NavigationState.restore(savedState["selectedTab"])))
     val state = mutableState.asStateFlow()
-    fun select(tab: MainTab) = update(mutableState.value.navigation.select(tab))
-    fun back() { mutableState.value.navigation.back()?.let(::update) }
-    private fun update(navigation: NavigationState) {
+    private var observation: Job? = null
+    init { retry() }
+    fun select(tab: MainTab) = updateNavigation(mutableState.value.navigation.select(tab))
+    fun back() { mutableState.value.navigation.back()?.let(::updateNavigation) }
+    private fun updateNavigation(navigation: NavigationState) {
         savedState["selectedTab"] = navigation.save()
-        mutableState.value = mutableState.value.copy(navigation = navigation)
+        mutableState.update { it.copy(navigation = navigation) }
+    }
+    fun retry() {
+        observation?.cancel()
+        mutableState.update { it.copy(library = LoadState.Loading) }
+        observation = viewModelScope.launch {
+            try {
+                preferences.preferences.distinctUntilChanged().collectLatest { prefs ->
+                    mutableState.update { it.copy(sort = prefs.librarySort) }
+                    repository.observe(LibraryQuery(sort = prefs.librarySort)).collect { library ->
+                        mutableState.update { it.copy(library = library) }
+                    }
+                }
+            } catch (cause: Exception) {
+                if (cause is CancellationException) throw cause
+                mutableState.update { it.copy(library = LoadState.Failed("Preferences could not be loaded. Stored data has not been reset.")) }
+            }
+        }
+    }
+    fun setSort(sort: LibrarySort) {
+        viewModelScope.launch {
+            try {
+                preferences.setLibrarySort(sort)
+                mutableState.update { it.copy(preferenceWriteError = null) }
+            } catch (cause: Exception) {
+                if (cause is CancellationException) throw cause
+                mutableState.update { it.copy(preferenceWriteError = "Sort preference could not be saved. Please retry.") }
+            }
+        }
     }
 }

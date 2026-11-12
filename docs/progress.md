@@ -33,9 +33,18 @@ User sign-off received 2026-11-13: updated APK installed and tested successfully
 These are manual device checks by the user, not Codex-run instrumentation. The message supplies no APK hash or device logs; artifact identity is not independently linked by checksum.
 Real process-death restoration, force-stop persistence, TalkBack/font-scale/performance and modern-device behaviour were not included in this confirmation and remain unverified. Phase 03.1 is complete without expanding the sign-off to those checks.
 
-## Phase 03.2 — PLANNED / approval pending
-[Detailed development plan](phase-03-2-plan.md): persistent preferences, Room foundation, typed library models/repository contracts and restoration tests. Documentation only; no Phase 03.2 application code, dependency or workflow changes have begun. Implementation requires user approval.
-Use separate development branches and review PRs. No future PR may be merged without user approval. Codex Cloud and GitHub Actions remain the build/test hosts; no local Windows build is required.
+## Phase 03.2 — APPROVED / IN PROGRESS
+Implementation approved 2026-11-13; PR #2 planning documentation is merged at `37999dbc9e388d3a98166bd1ab3a78d2eb93516f`. Branch: codex/phase-03-2-persistence. No implementation PR merge is authorized.
+
+TESTED compatibility gate before schema expansion: Room 2.8.5, KSP 2.3.13, DataStore 1.3.0, existing Kotlin 2.4.10/AGP 9.5.0/Gradle wrapper 9.6.0/JDK 17. KSP-generated probe database, debug APK and existing 17 JVM tests succeeded (2m 10s). Probe removed before full schema work. [Gate log](test-evidence/phase-03-2/compatibility-gate.txt).
+
+IMPLEMENTED / ready for review in [PR #3](https://github.com/rahadul231/YouPlayerTube/pull/3): Room database v1 (exported six-table schema), validated media/collection models and repository contracts, application-scoped injection, real reactive Library summaries/metadata, persistent default sort, and explicit loading/error/retry states. Full media import/playback/downloads and collection editor screens remain PLANNED. All 58 requirement definitions and original ten-screen/provider documents remain unchanged.
+
+TESTED: [Actions #22](https://github.com/rahadul231/YouPlayerTube/actions/runs/43320059842) passed all four jobs for source commit `48383842c9d701ce89371af10c99409636ac7a60`. 30 JVM tests passed; 11 Android Room/UI tests plus 2 separately sequenced upgrade tests passed on EACH of API 28, 36 and 37.0. Actual process termination/task restoration and force-stop/fresh Home checks passed on all three. Same-key rebuilt Phase 03.1 -> 03.2 install retained data without uninstall. Real Room corruption/incompatible-schema tests preserve stored data; history/metadata deletion tests preserve media bytes. Lint: 0 errors / 6 warnings; app and test APKs generated. [Complete report and raw evidence](test-evidence/phase-03-2/report.md).
+
+TESTED scope is automated Cloud/emulator verification. Samsung SM-J415F checks for this APK are NOT performed and are BLOCKED by signing continuity. Overall owner acceptance/sign-off remains pending; do not call the physical upgrade compatible. [Device checklist](phase-03-2-device-checklist.md) starts with this signing gate. API 37 foundation tests pass, but targetSdk 37 remains provisional for later platform/media-service features.
+
+Signing clarification received from owner during implementation: no known reusable signing key. [Signing evidence, secure configuration proposal and safe migration options](signing.md) documented before resuming further storage work. Existing signing and allowBackup=false policy remain unchanged. BLOCKED: guaranteed in-place upgrade of the owner's build #9 APK until signing identity/key continuity is established. No uninstall, package change or signing-key replacement is authorized/performed. Development/emulator tests continue independently; the proposed new reusable key setup needs owner approval.
 
 ## Preserved scope
 Home, Downloads, Library, Settings; authorized YouTube search/embed/fallback; native local/authorized playback, PiP/background audio, authorized downloads/real qualities, library, playlists, favorites, history, timer and settings remain PLANNED unless explicitly evidenced below.

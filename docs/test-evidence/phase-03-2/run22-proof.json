@@ -1,0 +1,52 @@
+{
+  "run": 22,
+  "run_id": 43320059842,
+  "source_commit": "48383842c9d701ce89371af10c99409636ac7a60",
+  "jvm": {
+    "executed": 30,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "android": [
+    {
+      "api": "28",
+      "job_id": 131538069192,
+      "runner_suites_passed": [
+        11,
+        1,
+        1
+      ],
+      "external_checks": [
+        "PASS: saved task restored Library after real background process termination",
+        "PASS: fresh launch after force-stop starts at Home"
+      ]
+    },
+    {
+      "api": "36",
+      "job_id": 131538069358,
+      "runner_suites_passed": [
+        11,
+        1,
+        1
+      ],
+      "external_checks": [
+        "PASS: saved task restored Library after real background process termination",
+        "PASS: fresh launch after force-stop starts at Home"
+      ]
+    },
+    {
+      "api": "37.0",
+      "job_id": 131538069277,
+      "runner_suites_passed": [
+        11,
+        1,
+        1
+      ],
+      "external_checks": [
+        "PASS: saved task restored Library after real background process termination",
+        "PASS: fresh launch after force-stop starts at Home"
+      ]
+    }
+  ]
+}

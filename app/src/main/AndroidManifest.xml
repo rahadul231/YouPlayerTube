@@ -3,6 +3,7 @@
 
     <!-- Phase 02: no permissions, no services, no custom icon yet (branding arrives in Prompt 05). -->
     <application
+        android:name=".YouPlayerTubeApplication"
         android:allowBackup="false"
         android:label="@string/app_name"
         android:supportsRtl="true"

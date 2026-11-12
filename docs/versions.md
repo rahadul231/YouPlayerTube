@@ -1,3 +1,11 @@
+## Phase 03.2 verified compatibility gate — 2026-11-13
+
+Selected stable Android-only Room 2.8.5 (androidx.room), KSP 2.3.13, Preferences DataStore 1.3.0, coroutines-test 1.10.2. Existing JDK 17, wrapper 9.6.0, AGP 9.5.0, Kotlin/Compose 2.4.10, lifecycle/Compose pins and SDK values retained. Official Maven metadata and release pages confirmed stable artifacts. Room 3's new namespace/API line would require more structural change; this application needs no KMP module, so the supported 2.8 stable Android line was chosen and integration-tested rather than assuming the new major is necessary.
+
+Gate used a minimal Room entity/DAO/database with KSP generation and :app:assembleDebug/:app:testDebugUnitTest. BUILD SUCCESSFUL in 2m 10s, 17 original JVM tests executed. Full schema was implemented only after that result. Final run #22 passed 30 JVM tests and real Android database/UI/upgrade/restoration checks on API 28, 36 and 37.0. Probe removed. See test-evidence/phase-03-2/compatibility-gate.txt and final report for later results. Android-only test runner 1.7.0 and Espresso 3.7.0 were subsequently selected from stable official Maven metadata after API 37 exposed an old Espresso InputManager.getInstance failure. App/runtime toolchain pins are unchanged. No signing/backup policy or minSdk change.
+
+Sources: https://developer.android.com/jetpack/androidx/releases/room ; https://github.com/google/ksp/releases ; https://developer.android.com/jetpack/androidx/releases/datastore ; official Maven version metadata. All dependency additions compile with the existing toolchain; device behaviour is a separate test scope.
+
 ## Phase 03.1 integration verification
 Cloud wrapper build on 2026-11-12 succeeded using JDK 17.0.12. Added lifecycle-viewmodel-compose/runtime-compose 2.11.0, JUnit 4.13.2, Compose UI test artifacts aligned to existing BOM, Android test runner 1.6.2. App and instrumentation APKs compile; 17 JVM tests pass. Device execution remains unverified. Existing toolchain pins retained. See test-evidence/phase-03-1/README.md for scope and warnings.
 

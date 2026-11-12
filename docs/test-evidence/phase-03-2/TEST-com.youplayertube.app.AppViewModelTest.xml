@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.youplayertube.app.AppViewModelTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-12T22:19:05.902Z" hostname="10078b09f3ab" time="0.272">
+  <properties/>
+  <testcase name="freshLaunchIgnoresDurableSortForNavigation" classname="com.youplayertube.app.AppViewModelTest" time="0.187"/>
+  <testcase name="databaseErrorIsNotAnEmptyLibraryAndRetryRecovers" classname="com.youplayertube.app.AppViewModelTest" time="0.031"/>
+  <testcase name="backUpdatesBothVisibleAndSavedState" classname="com.youplayertube.app.AppViewModelTest" time="0.001"/>
+  <testcase name="corruptSavedSelectionRecoversWithoutDemoData" classname="com.youplayertube.app.AppViewModelTest" time="0.0"/>
+  <testcase name="sortChangeDrivesRepositoryQuery" classname="com.youplayertube.app.AppViewModelTest" time="0.005"/>
+  <testcase name="preferenceWriteFailureIsVisibleAndDoesNotChangeSort" classname="com.youplayertube.app.AppViewModelTest" time="0.001"/>
+  <testcase name="preferenceReadFailureDoesNotBecomeDefaults" classname="com.youplayertube.app.AppViewModelTest" time="0.005"/>
+  <testcase name="selectionWritesSavedStateAndNewModelRestoresIt" classname="com.youplayertube.app.AppViewModelTest" time="0.036"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

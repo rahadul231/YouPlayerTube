@@ -1,6 +1,6 @@
 package com.youplayertube.app
 import com.youplayertube.app.ui.navigation.*
-import com.youplayertube.app.data.EmptyLibraryRepository
+import com.youplayertube.app.domain.LibrarySnapshot
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -28,7 +28,7 @@ class NavigationTest {
         assertEquals(NavigationState(), state.select(MainTab.LIBRARY).back())
     }
     @Test fun initialLibraryContainsNoDemoCounts() {
-        val snapshot = EmptyLibraryRepository().snapshot()
+        val snapshot = LibrarySnapshot()
         assertEquals(listOf(0,0,0,0,0,0), listOf(snapshot.videos,snapshot.music,snapshot.playlists,snapshot.favorites,snapshot.watchLater,snapshot.history))
     }
 }
