@@ -14,6 +14,7 @@ import org.junit.Assert.*
 class UpgradePersistenceTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
     @Test fun prepare() = runBlocking {
+        java.io.File(context.filesDir,"upgrade-marker").writeText("retained")
         val db=YouPlayerTubeDatabase.open(context)
         try { db.library().save(MediaRecord("upgrade-fixture",LocalUri("content://media/video/upgrade"),"Upgrade fixture",MediaKind.VIDEO,1).toEntity()) } finally { db.close() }
         preferences { it.setLibrarySort(LibrarySort.NAME) }

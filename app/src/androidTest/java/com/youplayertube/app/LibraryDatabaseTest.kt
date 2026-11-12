@@ -40,6 +40,9 @@ class LibraryDatabaseTest {
         repository.save(item("one"))
         assertTrue(repository.save(item("one").copy(id="duplicate")) is WriteResult.Failed)
         assertTrue(repository.favorite("missing",1) is WriteResult.Failed)
+        val changed = MediaRecord("one",YouTubeReference(YouTubeVideoId("abcdefghijk")),"Cannot reclassify",MediaKind.VIDEO,1)
+        assertTrue(repository.save(changed) is WriteResult.Failed)
+        assertEquals("LOCAL",db.library().find("one")!!.sourceType)
     }
     @Test fun playlistReorderIsAtomicAndInvalidOrderDoesNotLoseEntries() = runBlocking {
         repository.save(item("a"));repository.save(item("b"));repository.savePlaylist(Playlist("p","Owned",1))
@@ -57,6 +60,18 @@ class LibraryDatabaseTest {
             repository.clearHistory();assertEquals(0,db.library().historyCount());assertNotNull(db.library().find("a"))
             repository.removeMetadata("a");assertEquals("owned",ownedFile.readText())
         } finally { ownedFile.delete() }
+    }
+    @Test fun invalidStoredSourceIsAnErrorNotAnEmptyOrNativeLibrary() = runBlocking {
+        val row=MediaRecord("yt",YouTubeReference(YouTubeVideoId("abcdefghijk")),"Link",MediaKind.VIDEO,1).toEntity()
+        db.library().save(row.copy(remoteUrl="https://example.org/forbidden.mp4"))
+        assertTrue(repository.observe(LibraryQuery()).first { it !is LoadState.Loading } is LoadState.Failed)
+    }
+    @Test fun reactiveSummaryUpdatesAfterAWrite() = runBlocking {
+        val updated=async(start=CoroutineStart.UNDISPATCHED) {
+            repository.observe(LibraryQuery()).filterIsInstance<LoadState.Ready<LibraryData>>().first { it.value.summary.videos == 1 }
+        }
+        repository.save(item("reactive"))
+        assertEquals(1,withTimeout(10000) { updated.await() }.value.summary.videos)
     }
     @Test fun onDiskDatabaseSurvivesCloseAndReopen() = runBlocking {
         val name="reopen-test.db"; context.deleteDatabase(name)
