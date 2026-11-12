@@ -12,7 +12,11 @@ fi
 image="system-images;android-${api};google_apis;x86_64"
 yes | sdkmanager --licenses >/dev/null || true
 sdkmanager emulator "$image"
-echo no | avdmanager create avd -n ypt-test -k "$image" --force
+export ANDROID_AVD_HOME="${RUNNER_TEMP:-/tmp}/ypt-avd"
+mkdir -p "$ANDROID_AVD_HOME"
+echo no | avdmanager create avd -n ypt-test -k "$image" -p "$ANDROID_AVD_HOME/ypt-test.avd" --force
+# Explicit ini location bridges command-line-tools/emulator location differences.
+printf 'avd.ini.encoding=UTF-8\npath=%s\n' "$ANDROID_AVD_HOME/ypt-test.avd" > "$ANDROID_AVD_HOME/ypt-test.ini"
 if [ ! -e /dev/kvm ]; then echo 'KVM is unavailable' >&2; exit 1; fi
 sudo chmod 666 /dev/kvm
 "$ANDROID_HOME/emulator/emulator" -avd ypt-test -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -accel on -cores 2 -memory 2048 > emulator.log 2>&1 &
