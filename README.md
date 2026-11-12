@@ -14,9 +14,9 @@ source /workspace/setup/android-env.sh
 
 Read [signing and upgrade safety](docs/signing.md) before installing: default debug signing does not guarantee compatibility with previously installed Actions APKs. No uninstall or key change is authorized.
 
-No Android Studio or Gradle build is required on the user's 4 GB Windows laptop. GitHub Actions runs wrapper builds/unit tests/lint and API 28/36 emulator database/UI/upgrade/restoration jobs, rejects zero-executed-test results and retains reports. Check each job result; compilation is not test execution. Download `app-debug.apk` from a successful PR Actions run. Debug signing is for review; a stable release signing key remains planned.
+No Android Studio or Gradle build is required on the user's 4 GB Windows laptop. GitHub Actions runs wrapper builds/unit tests/lint and API 28/36/37.0 emulator database/UI/upgrade/restoration jobs, rejects zero-executed-test results and retains reports. Check each job result; compilation is not test execution. Download `app-debug.apk` from a successful PR Actions run. Debug signing is for review; a stable release signing key remains planned.
 
-Instrumented UI tests require a connected Android device/emulator:
+Instrumented tests below are for isolated test emulators with the matching app APK already installed. Do not run fixture/upgrade scripts against the owner's phone:
 
 ```sh
 bash scripts/run-device-tests.sh

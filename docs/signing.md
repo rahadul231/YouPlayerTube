@@ -9,6 +9,21 @@ We cannot infer that GitHub Secrets is empty from the build files: no existing w
 
 Current branch keeps the existing signing configuration unchanged. It adds a certificate comparison against build #9 and a separate same-key emulator upgrade test. The latter establishes update/data behaviour only for APKs built with the same controlled key in one CI job; it does NOT establish compatibility with the owner's installed APK. The manifest's allowBackup=false remains unchanged.
 
+## Certificate comparison observed
+[Actions run #12](https://github.com/rahadul231/YouPlayerTube/actions/runs/43310503010) retrieved build #9 and compared apksigner SHA-256 certificate digests: **DIFFERENT**. Its signing result explicitly reports the owner's in-place upgrade as BLOCKED. Raw public certificate details are in verification-reports/signing. This establishes incompatibility for that review build, not proof of private-key recoverability. Future artifacts must be compared again; no same-key continuity should be assumed.
+
+### Public certificate fingerprints verified in runs #21/#22
+
+These are certificate digests, not private keys or APK-file hashes.
+
+| Candidate | SHA-256 certificate digest | Matches installed build #9? |
+|---|---|---|
+| Build #9 | `f9a814f1a36023ac619cefb88b816fe310a798ef83dd240bc8ef4b128efd04b5` | Baseline |
+| Actions review build #22 | `3999c2cd4d407fbc88051860623bc5113b7f737f19386b4e9bd985cbc1b4686a` | No |
+| Existing Cloud debug identity (verified from Cloud APK) | `1d752f8188831d8c46717f6ea0af00e4018d00b5ea7521f14cca31e59fb357c2` | No |
+
+The configured Cloud identity does not recover the installed signing line either. No matching private key has been established from currently accessible build configuration; unknown external backups/Secrets remain unverified. Future Actions artifacts must still be compared individually because default debug identities can change between runners.
+
 ## Recommended reusable configuration — approval/setup required
 1. First search secure backups/runner retention or any deliberately configured secret for the exact build #9 keystore. Compare certificate SHA-256 before using a candidate; never rotate or replace the candidate by assumption.
 2. If available, securely retain that key for this package's upgrade line. Otherwise choose a new, long-lived signing key only after the owner approves the migration consequences.

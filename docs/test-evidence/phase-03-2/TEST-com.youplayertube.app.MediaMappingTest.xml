@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.youplayertube.app.MediaMappingTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-12T22:19:06.182Z" hostname="10078b09f3ab" time="0.024">
+  <properties/>
+  <testcase name="providerMetadataCachingIsNotEnabled" classname="com.youplayertube.app.MediaMappingTest" time="0.004"/>
+  <testcase name="sourceRoundTrips" classname="com.youplayertube.app.MediaMappingTest" time="0.015"/>
+  <testcase name="invalidMetadataAndQueryBoundsRejected" classname="com.youplayertube.app.MediaMappingTest" time="0.001"/>
+  <testcase name="signedRemoteLocatorsAreNotPersisted" classname="com.youplayertube.app.MediaMappingTest" time="0.001"/>
+  <testcase name="youtubeCannotAcquireNativePayload" classname="com.youplayertube.app.MediaMappingTest" time="0.002"/>
+  <testcase name="sourceIdentityMismatchFails" classname="com.youplayertube.app.MediaMappingTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.youplayertube.app.PreferencesPersistenceTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-12T22:19:06.216Z" hostname="10078b09f3ab" time="0.29">
+  <properties/>
+  <testcase name="durableUpdateReopensAndUnknownEnumUsesDefault" classname="com.youplayertube.app.PreferencesPersistenceTest" time="0.275"/>
+  <testcase name="corruptPreferencesArePreservedAndReported" classname="com.youplayertube.app.PreferencesPersistenceTest" time="0.015"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
