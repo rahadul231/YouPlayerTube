@@ -1,16 +1,18 @@
 """Real background-process kill and force-stop checks on isolated CI emulator only."""
-import subprocess, time, re, xml.etree.ElementTree as ET
+import subprocess, time, re, pathlib, xml.etree.ElementTree as ET
 PACKAGE = 'com.youplayertube.app'
 def adb(*args):
     return subprocess.check_output(['adb', *args], text=True).strip()
 def tree():
     adb('shell', 'rm', '-f', '/sdcard/ypt-window.xml')
     adb('shell', 'uiautomator', 'dump', '/sdcard/ypt-window.xml')
-    return ET.fromstring(adb('shell', 'cat', '/sdcard/ypt-window.xml'))
+    xml = adb('shell', 'cat', '/sdcard/ypt-window.xml')
+    pathlib.Path('restoration-window.xml').write_text(xml)
+    return ET.fromstring(xml)
 def clickable(root, text):
     parents = {child: parent for parent in root.iter() for child in parent}
     for node in root.iter():
-        if node.attrib.get('text') == text:
+        if node.attrib.get('text') == text or node.attrib.get('content-desc') == text:
             while node is not None and node.attrib.get('clickable') != 'true':
                 node = parents.get(node)
             if node is not None:
@@ -19,14 +21,17 @@ def clickable(root, text):
 def wait_selected(label):
     for _ in range(10):
         try:
-            if clickable(tree(), label).attrib.get('selected') == 'true':
+            marker = {'Home': 'Your media, in one place', 'Library': 'Default library sort'}[label]
+            if any(marker in node.attrib.get('text', '') or marker in node.attrib.get('content-desc', '') for node in tree().iter()):
                 return
         except (AssertionError, subprocess.CalledProcessError, ET.ParseError):
             pass
         time.sleep(1)
-    raise AssertionError(f'{label} not selected')
+    snapshot = pathlib.Path('restoration-window.xml')
+    if snapshot.exists(): print(snapshot.read_text())
+    raise AssertionError(f'{label} destination content not visible')
 def launch():
-    adb('shell', 'am', 'start', '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER', '-f', '0x10200000', '-n', PACKAGE+'/.MainActivity')
+    print(adb('shell', 'am', 'start', '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER', '-f', '0x10200000', '-n', PACKAGE+'/.MainActivity'))
 adb('shell', 'am', 'force-stop', PACKAGE)
 launch(); wait_selected('Home')
 node = clickable(tree(), 'Library')

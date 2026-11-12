@@ -222,4 +222,5 @@ jobs:
             device-tests.txt
             prepare.txt
             verify.txt
+            restoration-window.xml
           if-no-files-found: warn
