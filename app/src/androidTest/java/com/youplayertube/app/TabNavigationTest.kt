@@ -13,7 +13,8 @@ class TabNavigationTest {
         tab("Downloads").performClick().assertIsSelected()
         compose.onNodeWithText("No downloads yet").assertIsDisplayed()
         tab("Library").performClick().assertIsSelected()
-        compose.onNodeWithText("Your library is empty").assertIsDisplayed()
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Your library is empty").fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText("Your library is empty").performScrollTo().assertIsDisplayed()
         tab("Settings").performClick().assertIsSelected()
         compose.activityRule.scenario.recreate()
         tab("Settings").assertIsSelected()

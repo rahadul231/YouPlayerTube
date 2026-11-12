@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -86,7 +87,7 @@ jobs:
           python - <<'PYTEST'
           import glob, xml.etree.ElementTree as ET
           reports = [ET.parse(p).getroot() for p in glob.glob('app/build/test-results/testDebugUnitTest/TEST-*.xml')]
-          count = sum(int(r.attrib['tests']) for r in reports)
+          count = sum(int(r.attrib['tests']) - int(r.attrib.get('skipped', 0)) for r in reports)
           assert count > 0, 'No unit tests executed'
           assert all(int(r.attrib['failures']) == 0 and int(r.attrib['errors']) == 0 for r in reports)
           print(f'Executed {count} unit tests')
@@ -110,6 +111,37 @@ jobs:
             "$AAPT2" dump badging "$APK" | grep -E "^package:|^sdkVersion|^targetSdkVersion|^application-label:" || true
           fi
 
+      - name: Compare review signing certificate with installed build 9 baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p app/build/reports/signing
+          if gh api repos/rahadul231/YouPlayerTube/actions/artifacts/13982012833/zip > "$RUNNER_TEMP/baseline-artifact"; then
+            python - <<'PYCERT'
+          import os,zipfile,pathlib
+          source=pathlib.Path(os.environ['RUNNER_TEMP'])/'baseline-artifact'
+          destination=source.with_suffix('.apk')
+          with zipfile.ZipFile(source) as archive:
+              if 'AndroidManifest.xml' in archive.namelist():
+                  destination.write_bytes(source.read_bytes())
+              else:
+                  names=[n for n in archive.namelist() if n.endswith('.apk')]
+                  assert len(names)==1
+                  destination.write_bytes(archive.read(names[0]))
+          PYCERT
+            "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$RUNNER_TEMP/baseline-artifact.apk" > app/build/reports/signing/build9.txt
+            "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs app/build/outputs/apk/debug/app-debug.apk > app/build/reports/signing/review.txt
+            OLD=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' app/build/reports/signing/build9.txt)
+            NEW=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' app/build/reports/signing/review.txt)
+            if [ -n "$OLD" ] && [ "$OLD" = "$NEW" ]; then
+              echo 'MATCH: certificate permits upgrade from build 9' | tee app/build/reports/signing/result.txt
+            else
+              echo 'BLOCKED: signing certificate differs from build 9. Do not uninstall user data to work around this. Original private key is required for an in-place upgrade.' | tee app/build/reports/signing/result.txt
+            fi
+          else
+            echo 'UNVERIFIED: could not retrieve build 9 for signing comparison' | tee app/build/reports/signing/result.txt
+          fi
+
       - name: Upload debug APK (unzipped single file)
         uses: actions/upload-artifact@v7
         with:
@@ -125,4 +157,70 @@ jobs:
           path: |
             app/build/reports/
             app/build/test-results/
+          if-no-files-found: warn
+
+  android-device-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        api: [28, 36]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: wrapper
+      - name: Build app, device tests and Phase 03.1 upgrade baseline
+        run: |
+          git worktree add ../phase031 65dd9a3f54dcd1d751703c51af046bea10d33825
+          (cd ../phase031 && sh ./gradlew --no-daemon :app:assembleDebug)
+          sh ./gradlew --no-daemon :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Start Android emulator
+        run: bash scripts/start-ci-emulator.sh ${{ matrix.api }}
+      - name: Verify signed upgrade from baseline without uninstall
+        run: |
+          adb install ../phase031/app/build/outputs/apk/debug/app-debug.apk
+          adb shell run-as com.youplayertube.app mkdir -p files
+          adb shell 'run-as com.youplayertube.app sh -c "echo retained > files/upgrade-marker"'
+          adb install -r app/build/outputs/apk/debug/app-debug.apk
+          adb shell run-as com.youplayertube.app cat files/upgrade-marker
+      - name: Run real Android database and UI tests
+        run: |
+          sh ./gradlew --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.notClass=com.youplayertube.app.UpgradePersistenceTest
+          python - <<'PYDEVICE'
+          import glob, xml.etree.ElementTree as E
+          reports=[E.parse(p).getroot() for p in glob.glob('app/build/outputs/androidTest-results/connected/**/*.xml',recursive=True)]
+          assert sum(int(r.attrib.get('tests',0))-int(r.attrib.get('skipped',0)) for r in reports)>0
+          assert all(int(r.attrib.get('failures',0))==0 and int(r.attrib.get('errors',0))==0 for r in reports)
+          PYDEVICE
+      - name: Verify database and preferences through package replacement
+        run: |
+          adb shell am instrument -w -e class com.youplayertube.app.UpgradePersistenceTest#prepare com.youplayertube.app.test/androidx.test.runner.AndroidJUnitRunner | tee prepare.txt
+          grep -q 'OK (1 test)' prepare.txt
+          adb install -r app/build/outputs/apk/debug/app-debug.apk
+          adb shell am instrument -w -e class com.youplayertube.app.UpgradePersistenceTest#verify com.youplayertube.app.test/androidx.test.runner.AndroidJUnitRunner | tee verify.txt
+          grep -q 'OK (1 test)' verify.txt
+      - name: Verify actual process-death and fresh-launch navigation
+        run: python scripts/restoration-test.py
+      - name: Collect device evidence
+        if: always()
+        run: adb logcat -d > logcat.txt || true
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: android-api-${{ matrix.api }}-reports
+          path: |
+            app/build/reports/androidTests/
+            app/build/outputs/androidTest-results/
+            emulator.log
+            logcat.txt
+            prepare.txt
+            verify.txt
           if-no-files-found: warn

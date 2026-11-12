@@ -33,9 +33,14 @@ User sign-off received 2026-11-13: updated APK installed and tested successfully
 These are manual device checks by the user, not Codex-run instrumentation. The message supplies no APK hash or device logs; artifact identity is not independently linked by checksum.
 Real process-death restoration, force-stop persistence, TalkBack/font-scale/performance and modern-device behaviour were not included in this confirmation and remain unverified. Phase 03.1 is complete without expanding the sign-off to those checks.
 
-## Phase 03.2 — PLANNED / approval pending
-[Detailed development plan](phase-03-2-plan.md): persistent preferences, Room foundation, typed library models/repository contracts and restoration tests. Documentation only; no Phase 03.2 application code, dependency or workflow changes have begun. Implementation requires user approval.
-Use separate development branches and review PRs. No future PR may be merged without user approval. Codex Cloud and GitHub Actions remain the build/test hosts; no local Windows build is required.
+## Phase 03.2 — APPROVED / IN PROGRESS
+Implementation approved 2026-11-13; PR #2 planning documentation is merged at `37999dbc9e388d3a98166bd1ab3a78d2eb93516f`. Branch: codex/phase-03-2-persistence. No implementation PR merge is authorized.
+
+TESTED compatibility gate before schema expansion: Room 2.8.5, KSP 2.3.13, DataStore 1.3.0, existing Kotlin 2.4.10/AGP 9.5.0/Gradle wrapper 9.6.0/JDK 17. KSP-generated probe database, debug APK and existing 17 JVM tests succeeded (2m 10s). Probe removed before full schema work. [Gate log](test-evidence/phase-03-2/compatibility-gate.txt).
+
+IMPLEMENTED, validation in progress: Room v1 models/schema/repository, persisted preferences and reactive Library. Status/results will be finalized after verification. Device/runtime tests are not claimed passed yet.
+
+Signing clarification received from owner during implementation: no known reusable signing key. [Signing evidence, secure configuration proposal and safe migration options](signing.md) documented before resuming further storage work. Existing signing and allowBackup=false policy remain unchanged. BLOCKED: guaranteed in-place upgrade of the owner's build #9 APK until signing identity/key continuity is established. No uninstall, package change or signing-key replacement is authorized/performed. Development/emulator tests continue independently; the proposed new reusable key setup needs owner approval.
 
 ## Preserved scope
 Home, Downloads, Library, Settings; authorized YouTube search/embed/fallback; native local/authorized playback, PiP/background audio, authorized downloads/real qualities, library, playlists, favorites, history, timer and settings remain PLANNED unless explicitly evidenced below.

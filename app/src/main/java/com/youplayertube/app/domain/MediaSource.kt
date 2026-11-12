@@ -8,7 +8,10 @@ sealed interface MediaSource
 data class YouTubeReference(val videoId: YouTubeVideoId) : MediaSource
 sealed interface NativeSource : MediaSource
 data class LocalUri(val uri: String) : NativeSource {
-    init { require(java.net.URI(uri).scheme == "content") { "SAF content URI required" } }
+    init {
+        val parsed = java.net.URI(uri)
+        require(parsed.scheme == "content" && !parsed.rawAuthority.isNullOrBlank() && !parsed.path.isNullOrBlank()) { "SAF content URI required" }
+    }
 }
 enum class DownloadRights { NOT_CONFIRMED, PLAYBACK_ONLY, DOWNLOAD_ALLOWED }
 /** Constructed only by an authorized-provider adapter, never by converting a YouTube reference. */

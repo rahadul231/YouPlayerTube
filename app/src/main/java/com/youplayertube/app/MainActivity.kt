@@ -12,13 +12,13 @@ import com.youplayertube.app.ui.AppViewModel
 import com.youplayertube.app.ui.YouPlayerTubeApp
 
 class MainActivity : ComponentActivity() {
-    private val container = AppContainer()
+    private val container get() = (application as YouPlayerTubeApplication).container
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val model: AppViewModel = viewModel(factory = viewModelFactory {
-                initializer { AppViewModel(createSavedStateHandle(), container.library) }
+                initializer { AppViewModel(createSavedStateHandle(), container.library, container.preferences) }
             })
             YouPlayerTubeApp(model)
         }

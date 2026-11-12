@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.youplayertube.app.ui.navigation.MainTab
+import com.youplayertube.app.domain.*
 
 private val colors = darkColorScheme(primary = Color(0xFFEF202B), background = Color(0xFF0B0B0E),
     surface = Color(0xFF17171C), onBackground = Color.White, onSurface = Color.White,
@@ -50,16 +51,33 @@ fun YouPlayerTubeApp(model: AppViewModel) {
                         }
                         MainTab.DOWNLOADS -> InfoCard("No downloads yet", "Authorized downloads are planned. No download queue or files have been created.")
                         MainTab.LIBRARY -> {
-                            InfoCard("Your library is empty", "Local media import and persistent collections are planned.")
-                            val counts = state.library
-                            listOf("Videos" to counts.videos, "Music" to counts.music, "Playlists" to counts.playlists,
-                                "Favorites" to counts.favorites, "Watch Later" to counts.watchLater, "History" to counts.history).forEach { (name, count) ->
-                                Text("$name · $count", style = MaterialTheme.typography.titleMedium)
+                            Text("Default library sort", style = MaterialTheme.typography.titleMedium)
+                            LibrarySort.entries.forEach { sort ->
+                                FilterChip(selected = state.sort == sort, onClick = { model.setSort(sort) },
+                                    label = { Text("Sort by ${sort.name.lowercase()}") })
+                            }
+                            state.preferenceWriteError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                            when (val library = state.library) {
+                                LoadState.Loading -> Text("Loading library…")
+                                is LoadState.Failed -> {
+                                    InfoCard("Library unavailable", library.message)
+                                    Button(onClick = model::retry) { Text("Retry library") }
+                                }
+                                is LoadState.Ready -> {
+                                    val counts = library.value.summary
+                                    if (library.value.items.isEmpty()) InfoCard("Your library is empty", "Local media import is planned. Your sort preference is saved on this device.")
+                                    listOf("Videos" to counts.videos, "Music" to counts.music, "Playlists" to counts.playlists,
+                                        "Favorites" to counts.favorites, "Watch Later" to counts.watchLater, "History" to counts.history).forEach { (name, count) ->
+                                        Text("$name · $count", style = MaterialTheme.typography.titleMedium)
+                                    }
+                                    library.value.items.forEach { item -> Text(item.title, style = MaterialTheme.typography.bodyLarge) }
+                                    if (library.value.items.isNotEmpty()) Text("Showing up to 100 metadata entries. Remote and YouTube links are not offline media.")
+                                }
                             }
                         }
                         MainTab.SETTINGS -> {
                             listOf("Playback", "Downloads", "Appearance", "Data & Storage", "Notifications", "Privacy & Security", "About").forEach { section ->
-                                InfoCard(section, if (section == "About") "YouPlayerTube · Phase 03.1 preview. Independent app; not affiliated with YouTube or Google."
+                                InfoCard(section, if (section == "About") "YouPlayerTube · Phase 03.2 preview. Independent app; not affiliated with YouTube or Google."
                                     else "Settings controls are planned for a later milestone.")
                             }
                         }
