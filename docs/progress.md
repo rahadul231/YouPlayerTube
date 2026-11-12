@@ -1,6 +1,6 @@
 # YouPlayerTube — Development State
 
-Updated: 2026-11-12 (Asia/Dhaka). This file is the authoritative progress record.
+Updated: 2026-11-13 (Asia/Dhaka). This file is the authoritative progress record.
 
 ## Status definitions
 - PLANNED: approved scope without completed code.
@@ -17,12 +17,25 @@ Phase 02: TESTED cloud build foundation. GitHub main baseline b689cd0ef3643150fd
 - Unit-test task reported NO-SOURCE: zero tests executed; no passing test suite was established.
 - Release signing, release APK and modern-device behaviour remain PLANNED.
 
-## Phase 03.1
-APPROVED by user on 2026-11-12. IMPLEMENTED: MVVM foundation, four-tab navigation, per-tab scroll state and selected-tab saved state, honest empty screens, typed source boundaries and eligibility contracts. No merge authorized.
+## Phase 03.1 — COMPLETE / user sign-off received
+APPROVED for implementation 2026-11-12; completion signed off by user 2026-11-13. IMPLEMENTED and TESTED within the scope below.
 
-TESTED in Codex Cloud with JDK 17 and Gradle wrapper 9.6.0: debug assembly, instrumentation APK compilation, 17 JVM tests (0 failures/errors/skips), lint (0 errors, 6 warnings). [Raw evidence](test-evidence/phase-03-1/README.md). Navigation model and SavedStateHandle transitions are unit-tested; real activity UI instrumentation is compiled but NOT EXECUTED. No physical-device test of this APK is claimed.
+- [PR #1](https://github.com/rahadul231/YouPlayerTube/pull/1) merged into main. Verified merge commit: `65dd9a3f54dcd1d751703c51af046bea10d33825` (65dd9a3).
+- Implemented: MVVM foundation, Home/Downloads/Library/Settings, Back rules, selected-tab saved state, per-tab scroll state, genuine empty screens and typed media-source/eligibility contracts.
 
-PLANNED: user Samsung acceptance and next state/persistence milestone. BLOCKED: instrumented runtime tests (no configured emulator/system image/device; adb also cannot initialize its default preferences directory). [Review PR #1](https://github.com/rahadul231/YouPlayerTube/pull/1) targets main from codex/phase-03-1-foundation; merge requires user approval. Final Cloud review build also passed after correcting the wide-screen content constraint.
+### Automated evidence — independently inspected
+- Codex Cloud: JDK 17, Gradle wrapper 9.6.0; debug APK and instrumentation APK assembled; 17 JVM tests, 0 failures/errors/skips; lint 0 errors, 6 warnings. [Raw Cloud evidence](test-evidence/phase-03-1/README.md).
+- [Actions build #9](https://github.com/rahadul231/YouPlayerTube/actions/runs/43302349235) on main at the merge commit: job successful; assembly/test-APK/lint step successful; logs explicitly show `Executed 17 unit tests`. APK and verification-reports artifacts uploaded. Verified 2026-11-13.
+- JVM tests verify navigation decisions, ViewModel saved-state transitions and media-source/download rules. Instrumentation test compiled; device execution is NOT established by this workflow.
+
+### Physical-device evidence — user-reported, accepted
+User sign-off received 2026-11-13: updated APK installed and tested successfully on Samsung Galaxy J4+ SM-J415F, Android 9/API 28. Confirmed: Home, Downloads, Library, Settings, Back navigation, scrolling and rotation.
+These are manual device checks by the user, not Codex-run instrumentation. The message supplies no APK hash or device logs; artifact identity is not independently linked by checksum.
+Real process-death restoration, force-stop persistence, TalkBack/font-scale/performance and modern-device behaviour were not included in this confirmation and remain unverified. Phase 03.1 is complete without expanding the sign-off to those checks.
+
+## Phase 03.2 — PLANNED / approval pending
+[Detailed development plan](phase-03-2-plan.md): persistent preferences, Room foundation, typed library models/repository contracts and restoration tests. Documentation only; no Phase 03.2 application code, dependency or workflow changes have begun. Implementation requires user approval.
+Use separate development branches and review PRs. No future PR may be merged without user approval. Codex Cloud and GitHub Actions remain the build/test hosts; no local Windows build is required.
 
 ## Preserved scope
 Home, Downloads, Library, Settings; authorized YouTube search/embed/fallback; native local/authorized playback, PiP/background audio, authorized downloads/real qualities, library, playlists, favorites, history, timer and settings remain PLANNED unless explicitly evidenced below.
@@ -30,7 +43,7 @@ No YouTube extraction/downloads, ad interference, forced background play or DRM 
 
 ## BLOCKED / pending evidence
 - Original visual PDF, logo masters and playbook are absent from repository. Obtain originals before pixel/branding acceptance; written visual decisions remain baseline.
-- Physical verification of Phase 03.1 awaits user installation. Phase 02 evidence does not apply to the new APK.
+- Phase 03.1 manual Samsung navigation/scroll/rotation acceptance is complete. Additional restoration, accessibility and modern-device checks remain PLANNED; automated device execution remains BLOCKED until a Cloud/Actions emulator or test device is available.
 - YouTube credentials, identity/Media Integrity and quota checks await the approved online spike.
 - targetSdk 37 is provisional; platform behaviour review is still required.
 
