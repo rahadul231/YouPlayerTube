@@ -212,7 +212,7 @@ jobs:
         run: python scripts/restoration-test.py
       - name: Collect device evidence
         if: always()
-        run: adb logcat -d > logcat.txt || true
+        run: timeout 15 adb logcat -d > logcat.txt || true
       - uses: actions/upload-artifact@v7
         if: always()
         with:
