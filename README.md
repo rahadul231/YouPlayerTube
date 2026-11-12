@@ -19,7 +19,7 @@ No Android Studio or Gradle build is required on the user's 4 GB Windows laptop.
 Instrumented UI tests require a connected Android device/emulator:
 
 ```sh
-./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.notClass=com.youplayertube.app.UpgradePersistenceTest
+bash scripts/run-device-tests.sh
 ```
 
 See [progress](docs/progress.md), [architecture](docs/architecture.md), [all 58 approved requirements](docs/requirements.md), [provider boundaries](docs/provider-boundaries.md), [visual QA](docs/visual-qa.md), and [Phase 03.2 Samsung test checklist](docs/phase-03-2-device-checklist.md). Original visual PDF/logo assets are missing; no substitute branding has been invented.

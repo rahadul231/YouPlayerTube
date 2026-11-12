@@ -16,3 +16,5 @@ Read signing.md and the PR's signing-result report. Do not uninstall the install
 8. Report pass/fail, screenshots and any errors. Real media import, playlist editors, playback and downloads remain later work, so the phone checklist cannot verify those features yet.
 
 Real Room/upgrade tests seed isolated emulator fixtures through the test APK only; the production app contains no fixture insertion controls. Samsung acceptance does not require running Gradle or an emulator on the 4 GB laptop.
+
+CI uses the exact assembled APK/test pair and scripts/run-device-tests.sh to avoid rebuilding a differently signed APK during connected-task installation. Raw instrumentation transcripts and generated JUnit XML are retained. This is isolated emulator testing, not authorization to install or uninstall anything on the Samsung.

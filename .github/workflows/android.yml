@@ -192,14 +192,7 @@ jobs:
           adb install -r app/build/outputs/apk/debug/app-debug.apk
           adb shell run-as com.youplayertube.app cat files/upgrade-marker
       - name: Run real Android database and UI tests
-        run: |
-          sh ./gradlew --no-daemon :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.notClass=com.youplayertube.app.UpgradePersistenceTest
-          python - <<'PYDEVICE'
-          import glob, xml.etree.ElementTree as E
-          reports=[E.parse(p).getroot() for p in glob.glob('app/build/outputs/androidTest-results/connected/**/*.xml',recursive=True)]
-          assert sum(int(r.attrib.get('tests',0))-int(r.attrib.get('skipped',0)) for r in reports)>0
-          assert all(int(r.attrib.get('failures',0))==0 and int(r.attrib.get('errors',0))==0 for r in reports)
-          PYDEVICE
+        run: bash scripts/run-device-tests.sh
       - name: Verify database and preferences through package replacement
         run: |
           adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
@@ -222,6 +215,7 @@ jobs:
             app/build/outputs/androidTest-results/
             emulator.log
             logcat.txt
+            device-tests.txt
             prepare.txt
             verify.txt
           if-no-files-found: warn
