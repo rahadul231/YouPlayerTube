@@ -1,6 +1,6 @@
 # Phase 03.2 — Persistent state and library data foundation
 
-Status: PLANNED, awaiting user approval. Prepared 2026-11-13 (Asia/Dhaka). This is a design proposal, not an implementation or a claim of tested persistence.
+Status: APPROVED for implementation by the user on 2026-11-13 (Asia/Dhaka). This file retains the approved design record. Actual implementation, executed tests and remaining signing/physical-device blockers are authoritative in progress.md and test-evidence/phase-03-2/report.md.
 
 ## 1. Baseline and scope
 
