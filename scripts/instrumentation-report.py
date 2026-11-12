@@ -12,14 +12,14 @@ for line in text.splitlines():
             cases.append((fields.copy(),code))
         fields={}
 root=E.Element('testsuite',name='AndroidJUnitRunner',tests=str(len(cases)),
-    failures=str(sum(code in (-1,-2) for _,code in cases)),
-    errors=str(sum(code not in (0,-1,-2,-3,-4) for _,code in cases)),
+    failures=str(sum(code == -2 for _,code in cases)),
+    errors=str(sum(code not in (0,-2,-3,-4) for _,code in cases)),
     skipped=str(sum(code in (-3,-4) for _,code in cases)))
 for fields,code in cases:
     case=E.SubElement(root,'testcase',classname=fields['class'],name=fields['test'])
     if code in (-3,-4): E.SubElement(case,'skipped')
     elif code != 0:
-        E.SubElement(case,'failure',message=fields.get('stack',fields.get('stream','Instrumentation failure'))).text=text
+        E.SubElement(case,'failure' if code == -2 else 'error',message=fields.get('stack',fields.get('stream','Instrumentation failure'))).text=text
 output.parent.mkdir(parents=True,exist_ok=True)
 E.ElementTree(root).write(output,encoding='utf-8',xml_declaration=True)
 match=re.search(r'OK \((\d+) tests?\)',text)
