@@ -133,7 +133,11 @@ jobs:
             "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs app/build/outputs/apk/debug/app-debug.apk > app/build/reports/signing/review.txt
             OLD=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' app/build/reports/signing/build9.txt)
             NEW=$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' app/build/reports/signing/review.txt)
-            if [ -n "$OLD" ] && [ "$OLD" = "$NEW" ]; then
+            echo "Build 9 certificate SHA-256: $OLD"
+            echo "Review certificate SHA-256: $NEW"
+            if [ -z "$OLD" ] || [ -z "$NEW" ]; then
+              echo 'UNVERIFIED: certificate digest extraction failed' | tee app/build/reports/signing/result.txt
+            elif [ "$OLD" = "$NEW" ]; then
               echo 'MATCH: certificate permits upgrade from build 9' | tee app/build/reports/signing/result.txt
             else
               echo 'BLOCKED: signing certificate differs from build 9. Do not uninstall user data to work around this. Original private key is required for an in-place upgrade.' | tee app/build/reports/signing/result.txt

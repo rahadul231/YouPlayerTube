@@ -4,6 +4,7 @@ PACKAGE = 'com.youplayertube.app'
 def adb(*args):
     return subprocess.check_output(['adb', *args], text=True).strip()
 def tree():
+    adb('shell', 'rm', '-f', '/sdcard/ypt-window.xml')
     adb('shell', 'uiautomator', 'dump', '/sdcard/ypt-window.xml')
     return ET.fromstring(adb('shell', 'cat', '/sdcard/ypt-window.xml'))
 def clickable(root, text):
@@ -20,7 +21,7 @@ def wait_selected(label):
         try:
             if clickable(tree(), label).attrib.get('selected') == 'true':
                 return
-        except AssertionError:
+        except (AssertionError, subprocess.CalledProcessError, ET.ParseError):
             pass
         time.sleep(1)
     raise AssertionError(f'{label} not selected')
