@@ -37,7 +37,7 @@ fun YouPlayerTubeApp(model: AppViewModel) {
         }) { padding ->
             tabStates.SaveableStateProvider(state.navigation.selected.name) {
             Box(Modifier.fillMaxSize().padding(padding)) {
-                Column(Modifier.fillMaxSize().widthIn(max = 720.dp)
+                Column(Modifier.widthIn(max = 720.dp).fillMaxSize()
                     .align(androidx.compose.ui.Alignment.TopCenter)
                     .verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 28.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)) {

@@ -22,7 +22,7 @@ APPROVED by user on 2026-11-12. IMPLEMENTED: MVVM foundation, four-tab navigatio
 
 TESTED in Codex Cloud with JDK 17 and Gradle wrapper 9.6.0: debug assembly, instrumentation APK compilation, 17 JVM tests (0 failures/errors/skips), lint (0 errors, 6 warnings). [Raw evidence](test-evidence/phase-03-1/README.md). Navigation model and SavedStateHandle transitions are unit-tested; real activity UI instrumentation is compiled but NOT EXECUTED. No physical-device test of this APK is claimed.
 
-PLANNED: user Samsung acceptance and next state/persistence milestone. BLOCKED: instrumented runtime tests (no configured emulator/system image/device; adb also cannot initialize its default preferences directory). GitHub review PR targets main; merge requires user approval.
+PLANNED: user Samsung acceptance and next state/persistence milestone. BLOCKED: instrumented runtime tests (no configured emulator/system image/device; adb also cannot initialize its default preferences directory). [Review PR #1](https://github.com/rahadul231/YouPlayerTube/pull/1) targets main from codex/phase-03-1-foundation; merge requires user approval. Final Cloud review build also passed after correcting the wide-screen content constraint.
 
 ## Preserved scope
 Home, Downloads, Library, Settings; authorized YouTube search/embed/fallback; native local/authorized playback, PiP/background audio, authorized downloads/real qualities, library, playlists, favorites, history, timer and settings remain PLANNED unless explicitly evidenced below.
