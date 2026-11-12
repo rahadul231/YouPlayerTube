@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.youplayertube.app.SourceBoundaryTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-12T17:48:09.798Z" hostname="10078b09f3ab" time="0.023">
+  <properties/>
+  <testcase name="rejectsProviderHostsIncludingSubdomainsAndTrailingDot" classname="com.youplayertube.app.SourceBoundaryTest" time="0.016"/>
+  <testcase name="localFilesAreNativeButAlreadyLocal" classname="com.youplayertube.app.SourceBoundaryTest" time="0.002"/>
+  <testcase name="similarHostIsNotYouTube" classname="com.youplayertube.app.SourceBoundaryTest" time="0.001"/>
+  <testcase name="remoteNeedsExplicitDownloadRights" classname="com.youplayertube.app.SourceBoundaryTest" time="0.001"/>
+  <testcase name="requiresSafUriAndValidVideoId" classname="com.youplayertube.app.SourceBoundaryTest" time="0.002"/>
+  <testcase name="rejectsUnsafeRemoteAddresses" classname="com.youplayertube.app.SourceBoundaryTest" time="0.0"/>
+  <testcase name="youtubeIsNotNativeAndCannotDownload" classname="com.youplayertube.app.SourceBoundaryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

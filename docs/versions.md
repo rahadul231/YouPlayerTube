@@ -1,3 +1,15 @@
+## Phase 03.1 integration verification
+Cloud wrapper build on 2026-11-12 succeeded using JDK 17.0.12. Added lifecycle-viewmodel-compose/runtime-compose 2.11.0, JUnit 4.13.2, Compose UI test artifacts aligned to existing BOM, Android test runner 1.6.2. App and instrumentation APKs compile; 17 JVM tests pass. Device execution remains unverified. Existing toolchain pins retained. See test-evidence/phase-03-1/README.md for scope and warnings.
+
+# Verified toolchain evidence — 2026-11-12
+
+Actions [build #6](https://github.com/rahadul231/YouPlayerTube/actions/runs/42660941551), commit b689cd0ef3643150fd63aae6b5679d29591b44a7, successfully assembled the existing configuration: AGP 9.5.0, Kotlin/Compose compiler 2.4.10, Compose BOM 2026.09.00, activity-compose 1.13.0, JDK 17, Gradle 9.6.0, compileSdk 37, minSdk 26, targetSdk 37 provisional. Wrapper files exist and wrapper execution/build succeeded. Existing Actions tags resolved successfully. Unit tests were NO-SOURCE, not passing tests.
+
+Cloud has JDK 17 at /workspace/toolchains/jdk17 and SDK platform android-37.0/build-tools 36.0.0. Source /workspace/setup/android-env.sh before builds; default system Java is 21. Dependency additions are verified only by subsequent builds/tests, recorded in progress.md.
+
+## Historical version-selection notes
+The original notes below predate build #6; their UNTESTED/missing-wrapper statements are superseded above. Pinned values remain in the version catalog and build files.
+
 # YouPlayerTube — Selected Versions (Phase 02)
 
 Updated: 2026-11-07. Source of truth for pinned values: `gradle/libs.versions.toml` (+ the KGP line in `build.gradle.kts`).

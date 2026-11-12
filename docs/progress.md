@@ -1,4 +1,43 @@
 # YouPlayerTube — Development State
+
+Updated: 2026-11-12 (Asia/Dhaka). This file is the authoritative progress record.
+
+## Status definitions
+- PLANNED: approved scope without completed code.
+- IMPLEMENTED: code exists, validation incomplete.
+- TESTED: named checks executed with evidence; scope and environment recorded.
+- BLOCKED: prerequisite missing; reason and next action recorded.
+
+## Baseline reconciliation
+Phase 01: APPROVED and COMPLETE on 2026-11-07. All 58 requirements YPT-001–YPT-058 and the original ten-screen design remain unchanged.
+Phase 02: TESTED cloud build foundation. GitHub main baseline b689cd0ef3643150fd63aae6b5679d29591b44a7.
+- Actions [build #6](https://github.com/rahadul231/YouPlayerTube/actions/runs/42660941551): successful debug assembly, APK upload and Gradle 9.6.0 wrapper execution/assembly.
+- APK SHA-256: a77cb9c15d2e5875a711a559dc1b1c0d09973bdc5e718490c87eaa5b4a3d06fd.
+- User confirmed installation and launch on Samsung Galaxy J4+ SM-J415F, Android 9/API 28. This is user-reported device evidence, not a Codex device test.
+- Unit-test task reported NO-SOURCE: zero tests executed; no passing test suite was established.
+- Release signing, release APK and modern-device behaviour remain PLANNED.
+
+## Phase 03.1
+APPROVED by user on 2026-11-12. IMPLEMENTED: MVVM foundation, four-tab navigation, per-tab scroll state and selected-tab saved state, honest empty screens, typed source boundaries and eligibility contracts. No merge authorized.
+
+TESTED in Codex Cloud with JDK 17 and Gradle wrapper 9.6.0: debug assembly, instrumentation APK compilation, 17 JVM tests (0 failures/errors/skips), lint (0 errors, 6 warnings). [Raw evidence](test-evidence/phase-03-1/README.md). Navigation model and SavedStateHandle transitions are unit-tested; real activity UI instrumentation is compiled but NOT EXECUTED. No physical-device test of this APK is claimed.
+
+PLANNED: user Samsung acceptance and next state/persistence milestone. BLOCKED: instrumented runtime tests (no configured emulator/system image/device; adb also cannot initialize its default preferences directory). GitHub review PR targets main; merge requires user approval.
+
+## Preserved scope
+Home, Downloads, Library, Settings; authorized YouTube search/embed/fallback; native local/authorized playback, PiP/background audio, authorized downloads/real qualities, library, playlists, favorites, history, timer and settings remain PLANNED unless explicitly evidenced below.
+No YouTube extraction/downloads, ad interference, forced background play or DRM bypass. Account features, MP3 conversion and other platforms remain deferred.
+
+## BLOCKED / pending evidence
+- Original visual PDF, logo masters and playbook are absent from repository. Obtain originals before pixel/branding acceptance; written visual decisions remain baseline.
+- Physical verification of Phase 03.1 awaits user installation. Phase 02 evidence does not apply to the new APK.
+- YouTube credentials, identity/Media Integrity and quota checks await the approved online spike.
+- targetSdk 37 is provisional; platform behaviour review is still required.
+
+## Historical Phase 01/02 record (superseded status statements)
+The following original record is retained as history. Statements about an empty repository, missing wrapper, unrun builds and unknown phone model are superseded by the reconciliation above.
+
+# YouPlayerTube — Development State
 Updated UTC: 2026-11-07 13:20 (local 2026-11-07 19:20 Asia/Dhaka)
 
 ## Current phase
