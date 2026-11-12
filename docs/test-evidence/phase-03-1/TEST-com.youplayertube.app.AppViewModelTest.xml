@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.youplayertube.app.AppViewModelTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-12T17:50:35.948Z" hostname="10078b09f3ab" time="0.059">
+  <properties/>
+  <testcase name="backUpdatesBothVisibleAndSavedState" classname="com.youplayertube.app.AppViewModelTest" time="0.034"/>
+  <testcase name="corruptSavedSelectionRecoversWithoutDemoData" classname="com.youplayertube.app.AppViewModelTest" time="0.0"/>
+  <testcase name="selectionWritesSavedStateAndNewModelRestoresIt" classname="com.youplayertube.app.AppViewModelTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

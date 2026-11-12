@@ -75,13 +75,22 @@ jobs:
       - name: Set up Gradle 9.6.0
         uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: '9.6.0'
+          gradle-version: wrapper
 
       - name: Build debug APK
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
+        run: sh ./gradlew --no-daemon --stacktrace :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
 
       - name: Run unit tests
-        run: gradle --no-daemon --stacktrace :app:testDebugUnitTest
+        run: |
+          sh ./gradlew --no-daemon --stacktrace :app:testDebugUnitTest
+          python - <<'PYTEST'
+          import glob, xml.etree.ElementTree as ET
+          reports = [ET.parse(p).getroot() for p in glob.glob('app/build/test-results/testDebugUnitTest/TEST-*.xml')]
+          count = sum(int(r.attrib['tests']) for r in reports)
+          assert count > 0, 'No unit tests executed'
+          assert all(int(r.attrib['failures']) == 0 and int(r.attrib['errors']) == 0 for r in reports)
+          print(f'Executed {count} unit tests')
+          PYTEST
 
       - name: Show SDK state after build (diagnostic)
         if: always()
@@ -108,18 +117,12 @@ jobs:
           archive: false
           if-no-files-found: error
 
-      - name: Verify Gradle wrapper (runs after the APK is already uploaded)
-        run: |
-          chmod +x gradlew
-          ./gradlew --no-daemon --version
-          ./gradlew --no-daemon --stacktrace :app:assembleDebug
-
-      - name: Upload build reports on failure
-        if: failure()
+      - name: Upload test and lint reports
+        if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: build-reports
+          name: verification-reports
           path: |
             app/build/reports/
-            build/reports/
-          if-no-files-found: ignore
+            app/build/test-results/
+          if-no-files-found: warn

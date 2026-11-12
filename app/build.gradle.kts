@@ -12,8 +12,9 @@ android {
         applicationId = "com.youplayertube.app"
         minSdk = 26
         targetSdk = 37 // provisional; Android 17 behaviour changes not yet reviewed
-        versionCode = 1
-        versionName = "0.0.2-phase02"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        versionCode = 2
+        versionName = "0.0.3-phase03.1"
     }
 
     buildTypes {
@@ -33,6 +34,13 @@ android {
 }
 
 dependencies {
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    testImplementation(libs.junit)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)

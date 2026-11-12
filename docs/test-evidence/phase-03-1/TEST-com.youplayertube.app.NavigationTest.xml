@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.youplayertube.app.NavigationTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-12T17:50:36.010Z" hostname="10078b09f3ab" time="0.013">
+  <properties/>
+  <testcase name="backFromEveryOtherRootReturnsHome" classname="com.youplayertube.app.NavigationTest" time="0.0"/>
+  <testcase name="reselectDoesNotAddHistory" classname="com.youplayertube.app.NavigationTest" time="0.0"/>
+  <testcase name="startsAtHome" classname="com.youplayertube.app.NavigationTest" time="0.0"/>
+  <testcase name="initialLibraryContainsNoDemoCounts" classname="com.youplayertube.app.NavigationTest" time="0.01"/>
+  <testcase name="homeBackDelegatesToAndroidExit" classname="com.youplayertube.app.NavigationTest" time="0.001"/>
+  <testcase name="unknownSavedRouteFallsBackToHome" classname="com.youplayertube.app.NavigationTest" time="0.0"/>
+  <testcase name="everyTabIsSelectableAndRestorable" classname="com.youplayertube.app.NavigationTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
