@@ -23,6 +23,7 @@ for fields,code in cases:
 output.parent.mkdir(parents=True,exist_ok=True)
 E.ElementTree(root).write(output,encoding='utf-8',xml_declaration=True)
 match=re.search(r'OK \((\d+) tests?\)',text)
-assert match and int(match[1]) == len(cases) and len(cases)>0, 'Incomplete/non-executed instrumentation run'
-assert all(code==0 for _,code in cases), 'Device tests failed or skipped; inspect raw transcript and XML'
+assert len(cases)>0, 'No Android test status events were recorded'
+assert all(code==0 for _,code in cases), 'Executed device tests failed or skipped; inspect raw transcript and XML'
+assert match and int(match[1]) == len(cases), 'Instrumentation did not complete all reported tests'
 print(f'Executed {len(cases)} Android tests; all passed')

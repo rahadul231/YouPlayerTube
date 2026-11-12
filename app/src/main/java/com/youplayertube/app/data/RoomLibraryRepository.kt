@@ -25,6 +25,8 @@ class RoomLibraryRepository(private val database: () -> YouPlayerTubeDatabase) :
             val entity = record.toEntity()
             val existing = db.library().find(record.id)
             require(existing == null || existing.sourceKey == entity.sourceKey) { "A source identity cannot be reclassified" }
+            val sourceOwner = db.library().findBySource(entity.sourceKey)
+            require(sourceOwner == null || sourceOwner.id == record.id) { "This source already belongs to another media record" }
             db.library().save(entity)
         }
     }

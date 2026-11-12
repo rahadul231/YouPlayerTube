@@ -8,6 +8,7 @@ abstract class LibraryDao {
     @Query("SELECT * FROM media_items WHERE instr(lower(title), lower(:text)) > 0 ORDER BY CASE WHEN :sort = 'NAME' THEN lower(title) END ASC, CASE WHEN :sort = 'TYPE' THEN kind END ASC, CASE WHEN :sort = 'DATE' THEN createdAt END DESC, id ASC LIMIT :limit")
     abstract fun observeItems(text: String, sort: String, limit: Int): Flow<List<MediaEntity>>
     @Query("SELECT * FROM media_items WHERE id = :id") abstract suspend fun find(id: String): MediaEntity?
+    @Query("SELECT * FROM media_items WHERE sourceKey = :key") abstract suspend fun findBySource(key: String): MediaEntity?
     @Query("SELECT * FROM media_items") abstract suspend fun all(): List<MediaEntity>
     @Upsert abstract suspend fun save(entity: MediaEntity)
     @Query("DELETE FROM media_items WHERE id = :id") abstract suspend fun remove(id: String)
